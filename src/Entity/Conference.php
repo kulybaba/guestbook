@@ -89,7 +89,7 @@ class Conference
      */
     public function __toString()
     {
-        return $this->city . '-' . $this->title;
+        return $this->city . ', ' . $this->title;
     }
 
     /**

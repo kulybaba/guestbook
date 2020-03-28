@@ -54,6 +54,14 @@ class Category
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->name;
+    }
+
+    /**
      * @return int|null
      */
     public function getId(): ?int
