@@ -75,6 +75,14 @@ class Speaker
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->firstName . ' ' . $this->lastName;
+    }
+
+    /**
      * @return int|null
      */
     public function getId(): ?int

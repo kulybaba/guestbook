@@ -1,0 +1,71 @@
+easy_admin:
+    site_name: Conference Guestbook
+
+    design:
+        menu:
+            - { route: 'home', label: 'Back to website', icon: 'home' }
+            - { entity: 'Conference', label: 'Conferences', icon: 'map-marker' }
+            - { entity: 'Speaker', label: 'Speakers', icon: 'user' }
+            - { entity: 'Category', label: 'Categories', icon: 'list' }
+            - { entity: 'User', label: 'Users', icon: 'users' }
+            - { entity: 'Comment', label: 'Comments', icon: 'comments' }
+            - { entity: 'City', label: 'Cities', icon: 'city' }
+
+    list:
+        max_results: 10
+
+    formats:
+        date: 'd.m.Y'
+        time: 'H:i'
+        datetime: 'd-M-Y H:i:s'
+
+
+    entities:
+
+        Conference:
+            class: App\Entity\Conference
+            list:
+                fields:
+                    - id
+                    - title
+                    - city
+                    - speakers
+                    - date
+                    - visible
+                    - comments
+                sort: ['date', 'DESC']
+                filters: ['title', 'city', 'date', 'visible']
+            edit:
+                fields:
+                    - visible
+                    - speakers
+                    - title
+                    - body
+                    - date
+                    - city
+                    - categories
+            show:
+                fields:
+                    - id
+                    - visible
+                    - speakers
+                    - title
+                    - body
+                    - date
+                    - city
+                    - categories
+
+        Speaker:
+            class: App\Entity\Speaker
+
+        Category:
+            class: App\Entity\Category
+
+        User:
+            class: App\Entity\User
+
+        Comment:
+            class: App\Entity\Comment
+
+        City:
+            class: App\Entity\City
