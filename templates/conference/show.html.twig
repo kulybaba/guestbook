@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conference - {{ conference.title }}{% endblock %}
+
+{% block body %}
+    <h3>{{ conference.title }}</h3>
+    <p>{{ conference.body }}</p>
+
+    <br>
+
+    <h3>Comments ({{ comments|length }}):</h3>
+    {% if comments|length > 0 %}
+        {% for comment in comments %}
+            <h4>{{ comment.author.firstName ~ ' ' ~ comment.author.lastName}}</h4>
+            <p>{{ comment.text }}</p>
+        {% endfor %}
+        {% if previous >= 0 %}
+            <a href="{{ path('conference_show', { id: conference.id, offset: previous }) }}">Previous</a>
+        {% endif %}
+        {% if next < comments|length %}
+            <a href="{{ path('conference_show', { id: conference.id, offset: next }) }}">Next</a>
+        {% endif %}
+    {% else %}
+        <p>No comments</p>
+    {% endif %}
+{% endblock %}
