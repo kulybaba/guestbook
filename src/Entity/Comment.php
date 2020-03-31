@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Comment
 {
+    const COMMENTS_LIMIT = 2;
+
     /**
      * @var int $id
      *
@@ -39,6 +41,14 @@ class Comment
      * @ORM\JoinColumn(nullable=false)
      */
     private $conference;
+
+    /**
+     * @var User|null $author
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
 
     /**
      * @return string
@@ -112,6 +122,26 @@ class Comment
     public function setConference(?Conference $conference): self
     {
         $this->conference = $conference;
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    /**
+     * @param User|null $author
+     *
+     * @return $this
+     */
+    public function setAuthor(?User $author): self
+    {
+        $this->author = $author;
 
         return $this;
     }

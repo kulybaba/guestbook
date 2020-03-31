@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>✅</h1>
+    <h3>Conferences</h3>
+    {% for conference in conferences %}
+        <p><a href="{{ path('conference_show', { 'id': conference.id }) }}">{{ conference.title }}</a></p>
+        <p>{{ conference.body }}</p>
+    {% endfor %}
 {% endblock %}
