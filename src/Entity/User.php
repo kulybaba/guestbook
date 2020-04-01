@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="`user`")
+ * @ORM\HasLifecycleCallbacks()
  */
 class User
 {
@@ -56,6 +57,13 @@ class User
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author", orphanRemoval=true)
      */
     private $comments;
+
+    /**
+     * @var \DateTimeInterface $created
+     *
+     * @ORM\Column(type="datetime")
+     */
+    private $created;
 
     public function __construct()
     {
@@ -197,5 +205,33 @@ class User
         }
 
         return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface|null
+     */
+    public function getCreated(): ?\DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    /**
+     * @param \DateTimeInterface $created
+     *
+     * @return $this
+     */
+    public function setCreated(\DateTimeInterface $created): self
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function setCreatedValue()
+    {
+        $this->setCreated(new \DateTime());
     }
 }
