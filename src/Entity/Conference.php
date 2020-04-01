@@ -5,10 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ConferenceRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity("slug")
  */
 class Conference
 {
@@ -92,6 +95,13 @@ class Conference
      * @ORM\JoinColumn(nullable=false)
      */
     private $city;
+
+    /**
+     * @var string $slug
+     *
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $slug;
 
     public function __construct()
     {
@@ -327,6 +337,36 @@ class Conference
         $this->city = $city;
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     *
+     * @return $this
+     */
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @param SluggerInterface $slugger
+     */
+    public function computeSlug(SluggerInterface $slugger)
+    {
+        if (!$this->slug || $this->slug === '-') {
+            $this->setSlug((string) $slugger->slug((string) $this)->lower());
+        }
     }
 
     /**
