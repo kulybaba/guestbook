@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Comment
 {
@@ -49,6 +50,13 @@ class Comment
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;
+
+    /**
+     * @var \DateTimeInterface $created
+     *
+     * @ORM\Column(type="datetime")
+     */
+    private $created;
 
     /**
      * @return string
@@ -144,5 +152,33 @@ class Comment
         $this->author = $author;
 
         return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface|null
+     */
+    public function getCreated(): ?\DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    /**
+     * @param \DateTimeInterface $created
+     *
+     * @return $this
+     */
+    public function setCreated(\DateTimeInterface $created): self
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function setCreatedValue()
+    {
+        $this->setCreated(new \DateTime());
     }
 }

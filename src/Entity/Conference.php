@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ConferenceRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Conference
 {
@@ -76,6 +77,20 @@ class Conference
      * @ORM\ManyToMany(targetEntity="App\Entity\Speaker", inversedBy="conferences")
      */
     private $speakers;
+
+    /**
+     * @var \DateTimeInterface $created
+     *
+     * @ORM\Column(type="datetime")
+     */
+    private $created;
+
+    /**
+     * @var \DateTimeInterface $updated
+     *
+     * @ORM\Column(type="datetime")
+     */
+    private $updated;
 
     public function __construct()
     {
@@ -311,5 +326,61 @@ class Conference
         }
 
         return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface|null
+     */
+    public function getCreated(): ?\DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    /**
+     * @param \DateTimeInterface $created
+     *
+     * @return $this
+     */
+    public function setCreated(\DateTimeInterface $created): self
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface|null
+     */
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    /**
+     * @param \DateTimeInterface $updated
+     *
+     * @return $this
+     */
+    public function setUpdated(\DateTimeInterface $updated): self
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function setCreatedValue()
+    {
+        $this->setCreated(new \DateTime());
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function setUpdatedValue()
+    {
+        $this->setUpdated(new \DateTime());
     }
 }
