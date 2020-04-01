@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -40,11 +42,16 @@ class City
     private $visible;
 
     /**
-     * @var Conference|null $conference
+     * @var Collection|Conference[] $conferences
      *
-     * @ORM\OneToOne(targetEntity="App\Entity\Conference", mappedBy="city", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Conference", mappedBy="city", orphanRemoval=true)
      */
-    private $conference;
+    private $conferences;
+
+    public function __construct()
+    {
+        $this->conferences = new ArrayCollection();
+    }
 
     /**
      * @return string
@@ -123,11 +130,11 @@ class City
     }
 
     /**
-     * @return Conference|null
+     * @return Collection|Conference[]
      */
-    public function getConference(): ?Conference
+    public function getConferences(): Collection
     {
-        return $this->conference;
+        return $this->conferences;
     }
 
     /**
@@ -135,13 +142,29 @@ class City
      *
      * @return $this
      */
-    public function setConference(Conference $conference): self
+    public function addConference(Conference $conference): self
     {
-        $this->conference = $conference;
-
-        // set the owning side of the relation if necessary
-        if ($conference->getCity() !== $this) {
+        if (!$this->conferences->contains($conference)) {
+            $this->conferences[] = $conference;
             $conference->setCity($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Conference $conference
+     *
+     * @return $this
+     */
+    public function removeConference(Conference $conference): self
+    {
+        if ($this->conferences->contains($conference)) {
+            $this->conferences->removeElement($conference);
+            // set the owning side to null (unless already changed)
+            if ($conference->getCity() === $this) {
+                $conference->setCity(null);
+            }
         }
 
         return $this;

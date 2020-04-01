@@ -34,7 +34,16 @@ easy_admin:
                     - visible
                     - comments
                 sort: ['date', 'DESC']
-                filters: ['title', 'city', 'date', 'visible']
+                filters: ['title', 'city', 'date', 'visible', 'created']
+            new:
+                fields:
+                    - visible
+                    - speakers
+                    - title
+                    - body
+                    - date
+                    - city
+                    - categories
             edit:
                 fields:
                     - visible
@@ -54,6 +63,8 @@ easy_admin:
                     - date
                     - city
                     - categories
+                    - created
+                    - updated
 
         Speaker:
             class: App\Entity\Speaker

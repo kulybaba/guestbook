@@ -50,14 +50,6 @@ class Conference
     private $visible;
 
     /**
-     * @var City $city
-     *
-     * @ORM\OneToOne(targetEntity="App\Entity\City", inversedBy="conference", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $city;
-
-    /**
      * @var Collection|Comment[] $comments
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="conference", orphanRemoval=true)
@@ -68,6 +60,7 @@ class Conference
      * @var Collection|Category[] $categories
      *
      * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="conferences")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $categories;
 
@@ -91,6 +84,14 @@ class Conference
      * @ORM\Column(type="datetime")
      */
     private $updated;
+
+    /**
+     * @var City|null $city
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\City", inversedBy="conferences")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $city;
 
     public function __construct()
     {
@@ -191,26 +192,6 @@ class Conference
     public function setVisible(bool $visible): self
     {
         $this->visible = $visible;
-
-        return $this;
-    }
-
-    /**
-     * @return City|null
-     */
-    public function getCity(): ?City
-    {
-        return $this->city;
-    }
-
-    /**
-     * @param City $city
-     *
-     * @return $this
-     */
-    public function setCity(City $city): self
-    {
-        $this->city = $city;
 
         return $this;
     }
@@ -329,6 +310,26 @@ class Conference
     }
 
     /**
+     * @return City|null
+     */
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param City|null $city
+     *
+     * @return $this
+     */
+    public function setCity(?City $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
      * @return \DateTimeInterface|null
      */
     public function getCreated(): ?\DateTimeInterface
@@ -374,6 +375,7 @@ class Conference
     public function setCreatedValue()
     {
         $this->setCreated(new \DateTime());
+        $this->setUpdated(new \DateTime());
     }
 
     /**
