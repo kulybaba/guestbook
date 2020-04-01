@@ -3,7 +3,7 @@
 {% block body %}
     <h3>Conferences</h3>
     {% for conference in conferences %}
-        <p><a href="{{ path('conference_show', { 'id': conference.id }) }}">{{ conference.title }}</a></p>
+        <p><a href="{{ path('conference_show', { 'slug': conference.slug }) }}">{{ conference.title }}</a></p>
         <p>{{ conference.body }}</p>
     {% endfor %}
 {% endblock %}

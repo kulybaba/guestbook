@@ -44,6 +44,7 @@ easy_admin:
                     - date
                     - city
                     - categories
+                    - slug
             edit:
                 fields:
                     - visible
@@ -53,6 +54,7 @@ easy_admin:
                     - date
                     - city
                     - categories
+                    - slug
             show:
                 fields:
                     - id
@@ -63,6 +65,7 @@ easy_admin:
                     - date
                     - city
                     - categories
+                    - slug
                     - created
                     - updated
 
