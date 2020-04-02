@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
@@ -25,6 +26,7 @@ class Comment
      * @var string $text
      *
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $text;
 
@@ -32,6 +34,8 @@ class Comment
      * @var bool $visible
      *
      * @ORM\Column(type="boolean")
+     * @Assert\NotBlank()
+     * @Assert\Length(min="1", max="255")
      */
     private $visible;
 
@@ -40,6 +44,7 @@ class Comment
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Conference", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotBlank()
      */
     private $conference;
 
@@ -48,6 +53,7 @@ class Comment
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotBlank()
      */
     private $author;
 
@@ -57,6 +63,11 @@ class Comment
      * @ORM\Column(type="datetime")
      */
     private $created;
+
+    public function __construct()
+    {
+        $this->visible = true;
+    }
 
     /**
      * @return string
