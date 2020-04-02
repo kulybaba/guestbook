@@ -103,6 +103,13 @@ class Conference
      */
     private $slug;
 
+    /**
+     * @var Photo|null $photo
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\Photo", inversedBy="conference", cascade={"persist", "remove"})
+     */
+    private $photo;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -367,6 +374,26 @@ class Conference
         if (!$this->slug || $this->slug === '-') {
             $this->setSlug((string) $slugger->slug((string) $this)->lower());
         }
+    }
+
+    /**
+     * @return Photo|null
+     */
+    public function getPhoto(): ?Photo
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param Photo|null $photo
+     *
+     * @return $this
+     */
+    public function setPhoto(?Photo $photo): self
+    {
+        $this->photo = $photo;
+
+        return $this;
     }
 
     /**

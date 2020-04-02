@@ -6,14 +6,24 @@
     <h3>{{ conference.title }}</h3>
     <p>{{ conference.body }}</p>
 
-    <br>
+    <h3>Add comment:</h3>
+    {{ form_start(commentForm) }}
+    {{ form_widget(commentForm) }}
+    <button type="submit">Comment</button>
+    {{ form_end(commentForm) }}
 
     <h3>Comments ({{ comments|length }}):</h3>
     {% if comments|length > 0 %}
         {% for comment in comments %}
             <h4>{{ comment.author.firstName ~ ' ' ~ comment.author.lastName}}</h4>
             <p>{{ comment.text }}</p>
+            <small>{{ comment.created|date('H:i:s d.m.Y') }}</small>
+            {% if comment.photo %}
+                <br>
+                <img src="{{ comment.photo.url }}" height="200">
+            {% endif %}
         {% endfor %}
+        <br><br>
         {% if previous >= 0 %}
             <a href="{{ path('conference_show', { slug: conference.slug, offset: previous }) }}">Previous</a>
         {% endif %}
