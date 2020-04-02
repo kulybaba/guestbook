@@ -10,6 +10,7 @@ easy_admin:
             - { entity: 'User', label: 'Users', icon: 'users' }
             - { entity: 'Comment', label: 'Comments', icon: 'comments' }
             - { entity: 'City', label: 'Cities', icon: 'city' }
+            - { entity: 'Photo', label: 'Photos', icon: 'photo' }
 
     list:
         max_results: 10
@@ -21,7 +22,6 @@ easy_admin:
 
 
     entities:
-
         Conference:
             class: App\Entity\Conference
             list:
@@ -83,3 +83,29 @@ easy_admin:
 
         City:
             class: App\Entity\City
+
+        Photo:
+            class: App\Entity\Photo
+            list:
+                fields:
+                    - id
+                    - { property: 'fileName', type: 'image', 'base_path': "/uploads/photos", label: 'Photo' }
+                    - url
+                    - extension
+                filters: ['fileName', 'extension']
+            new:
+                fields:
+                    - url
+                    - fileName
+                    - extension
+            edit:
+                fields:
+                    - url
+                    - fileName
+                    - extension
+            show:
+                fields:
+                    - id
+                    - { property: 'fileName', type: 'image', 'base_path': "/uploads/photos", label: 'Photo' }
+                    - url
+                    - extension

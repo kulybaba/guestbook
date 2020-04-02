@@ -18,7 +18,12 @@
             <h4>{{ comment.author.firstName ~ ' ' ~ comment.author.lastName}}</h4>
             <p>{{ comment.text }}</p>
             <small>{{ comment.created|date('H:i:s d.m.Y') }}</small>
+            {% if comment.photo %}
+                <br>
+                <img src="{{ comment.photo.url }}" height="200">
+            {% endif %}
         {% endfor %}
+        <br><br>
         {% if previous >= 0 %}
             <a href="{{ path('conference_show', { slug: conference.slug, offset: previous }) }}">Previous</a>
         {% endif %}

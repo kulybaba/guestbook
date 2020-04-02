@@ -64,6 +64,13 @@ class Comment
      */
     private $created;
 
+    /**
+     * @var Photo $photo
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\Photo", inversedBy="comment", cascade={"persist", "remove"})
+     */
+    private $photo;
+
     public function __construct()
     {
         $this->visible = true;
@@ -161,6 +168,26 @@ class Comment
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * @return Photo|null
+     */
+    public function getPhoto(): ?Photo
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param Photo|null $photo
+     *
+     * @return $this
+     */
+    public function setPhoto(?Photo $photo): self
+    {
+        $this->photo = $photo;
 
         return $this;
     }

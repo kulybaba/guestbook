@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\Conference;
+use App\Entity\Photo;
 use App\Form\CommentFormType;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -27,16 +30,41 @@ class ConferenceController extends AbstractController
     /**
      * @Route("/conference/{slug}", name="conference_show")
      */
-    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, EntityManagerInterface $entityManager)
-    {
+    public function show(
+        Request $request,
+        Conference $conference,
+        CommentRepository $commentRepository,
+        EntityManagerInterface $entityManager,
+        string $photoDir,
+        UserRepository $userRepository
+    ) {
         $offset = max(0, $request->query->getInt('offset', 0));
         $paginator = $commentRepository->getCommentsPaginator($conference, $offset);
 
         $comment = new Comment();
         $comment->setConference($conference);
+        $comment->setAuthor($userRepository->find(1));
         $form = $this->createForm(CommentFormType::class, $comment);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($file = $form['photo']->getData()) {
+                $extension = $file->guessExtension();
+                $fileName = bin2hex(random_bytes(10)) . '.' . $extension;
+                $photo = new Photo();
+                $photo->setFileName($fileName);
+                $photo->setExtension($extension);
+                $photo->setUrl(Photo::DIR_NAME . $fileName);
+
+                try {
+                    $file->move($photoDir, $fileName);
+                } catch (FileException $e) {
+                    //
+                }
+
+                $comment->setPhoto($photo);
+                $entityManager->persist($photo);
+            }
+
             $entityManager->persist($comment);
             $entityManager->flush();
 
