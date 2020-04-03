@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "783979a6a89442d37a5f1f17e78ae51f",
+    "content-hash": "d4d6a77f5f14347820a83a6de9726938",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -4149,16 +4149,16 @@
         },
         {
             "name": "symfony/security-bundle",
-            "version": "v5.0.6",
+            "version": "v5.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security-bundle.git",
-                "reference": "c1994819a592bd703329188847881e0d67d8d001"
+                "reference": "1f42f8213cfbffce09c0a1834f34a4b1d444c4c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/security-bundle/zipball/c1994819a592bd703329188847881e0d67d8d001",
-                "reference": "c1994819a592bd703329188847881e0d67d8d001",
+                "url": "https://api.github.com/repos/symfony/security-bundle/zipball/1f42f8213cfbffce09c0a1834f34a4b1d444c4c1",
+                "reference": "1f42f8213cfbffce09c0a1834f34a4b1d444c4c1",
                 "shasum": ""
             },
             "require": {
@@ -4242,7 +4242,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-03-16T12:10:54+00:00"
+            "time": "2020-03-30T11:42:42+00:00"
         },
         {
             "name": "symfony/security-core",

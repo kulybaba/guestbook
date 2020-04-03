@@ -5,14 +5,20 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="`user`")
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
  */
-class User
+class User implements UserInterface
 {
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_USER = 'ROLE_USER';
+
     /**
      * @var int $id
      *
@@ -37,14 +43,6 @@ class User
     private $lastName;
 
     /**
-     * @var City|null $city
-     *
-     * @ORM\OneToOne(targetEntity="App\Entity\City", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $city;
-
-    /**
      * @var bool $active
      *
      * @ORM\Column(type="boolean")
@@ -64,6 +62,35 @@ class User
      * @ORM\Column(type="datetime")
      */
     private $created;
+
+    /**
+     * @var string $username
+     *
+     * @ORM\Column(type="string", length=180, unique=true)
+     */
+    private $username;
+
+    /**
+     * @var array $roles
+     *
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
+
+    /**
+     * @var string The hashed password
+     *
+     * @ORM\Column(type="string")
+     */
+    private $password;
+
+    /**
+     * @var City|null $city
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\City", inversedBy="users")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $city;
 
     public function __construct()
     {
@@ -127,26 +154,6 @@ class User
     }
 
     /**
-     * @return City|null
-     */
-    public function getCity(): ?City
-    {
-        return $this->city;
-    }
-
-    /**
-     * @param City $city
-     *
-     * @return $this
-     */
-    public function setCity(City $city): self
-    {
-        $this->city = $city;
-
-        return $this;
-    }
-
-    /**
      * @return bool|null
      */
     public function isActive(): ?bool
@@ -203,6 +210,115 @@ class User
                 $comment->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     *
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return (string) $this->username;
+    }
+
+    /**
+     * @param string $username
+     *
+     * @return $this
+     */
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     *
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @param array $roles
+     *
+     * @return $this
+     */
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     *
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return (string) $this->password;
+    }
+
+    /**
+     * @param string $password
+     *
+     * @return $this
+     */
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getSalt()
+    {
+        // not needed when using the "bcrypt" algorithm in security.yaml
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    /**
+     * @return City|null
+     */
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param City|null $city
+     *
+     * @return $this
+     */
+    public function setCity(?City $city): self
+    {
+        $this->city = $city;
 
         return $this;
     }

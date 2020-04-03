@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ConferenceController extends AbstractController
@@ -20,7 +21,7 @@ class ConferenceController extends AbstractController
     /**
      * @Route("/conferences", name="conferences")
      */
-    public function index(ConferenceRepository $conferenceRepository)
+    public function index(ConferenceRepository $conferenceRepository): Response
     {
         return $this->render('conference/index.html.twig', [
             'conferences' => $conferenceRepository->findAll(),
@@ -37,7 +38,7 @@ class ConferenceController extends AbstractController
         EntityManagerInterface $entityManager,
         string $photoDir,
         UserRepository $userRepository
-    ) {
+    ): Response {
         $offset = max(0, $request->query->getInt('offset', 0));
         $paginator = $commentRepository->getCommentsPaginator($conference, $offset);
 
