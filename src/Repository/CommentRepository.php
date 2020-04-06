@@ -25,6 +25,7 @@ class CommentRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('c')
             ->andWhere('c.conference = :conference')
+            ->orderBy('c.created', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults(Comment::COMMENTS_LIMIT)
             ->setParameter('conference', $conference)

@@ -115,6 +115,8 @@ class Conference
         $this->comments = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->speakers = new ArrayCollection();
+
+        $this->visible = true;
     }
 
     /**
