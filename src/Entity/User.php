@@ -92,6 +92,13 @@ class User implements UserInterface
      */
     private $city;
 
+    /**
+     * @var string|null $email
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $email;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -319,6 +326,26 @@ class User implements UserInterface
     public function setCity(?City $city): self
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string|null $email
+     *
+     * @return $this
+     */
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }

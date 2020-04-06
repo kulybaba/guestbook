@@ -9,6 +9,7 @@ use App\Form\CommentFormType;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
 use App\Repository\UserRepository;
+use App\SpamChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -24,7 +25,7 @@ class ConferenceController extends AbstractController
     public function index(ConferenceRepository $conferenceRepository): Response
     {
         return $this->render('conference/index.html.twig', [
-            'conferences' => $conferenceRepository->findAll(),
+            'conferences' => $conferenceRepository->findBy([], ['date' => 'DESC']),
         ]);
     }
 
@@ -36,15 +37,15 @@ class ConferenceController extends AbstractController
         Conference $conference,
         CommentRepository $commentRepository,
         EntityManagerInterface $entityManager,
-        string $photoDir,
-        UserRepository $userRepository
+        SpamChecker $spamChecker,
+        string $photoDir
     ): Response {
         $offset = max(0, $request->query->getInt('offset', 0));
         $paginator = $commentRepository->getCommentsPaginator($conference, $offset);
 
         $comment = new Comment();
         $comment->setConference($conference);
-        $comment->setAuthor($userRepository->find(1));
+        $comment->setAuthor($this->getUser());
         $form = $this->createForm(CommentFormType::class, $comment);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -67,6 +68,17 @@ class ConferenceController extends AbstractController
             }
 
             $entityManager->persist($comment);
+
+            $context = [
+                'user_ip' => $request->getClientIp(),
+                'user_agent' => $request->headers->get('user-agent'),
+                'referrer' => $request->headers->get('referer'),
+                'permalink' => $request->getUri(),
+            ];
+            if ($spamChecker->getSpamScore($comment, $context) === 2) {
+                $comment->setVisible(false);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('conference_show', [
