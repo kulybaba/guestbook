@@ -83,7 +83,15 @@ class AppFixtures extends Fixture
         $comment1->setConference($amsterdamConference);
         $comment1->setText('This was a great conference.');
         $comment1->setVisible(true);
+        $comment1->setState(Comment::STATE_PUBLISHED);
         $manager->persist($comment1);
+
+        $comment2 = new Comment();
+        $comment2->setAuthor($author);
+        $comment2->setConference($amsterdamConference);
+        $comment2->setText('I think this one is going to be moderated.');
+        $comment2->setVisible(true);
+        $manager->persist($comment2);
 
         $manager->flush();
     }

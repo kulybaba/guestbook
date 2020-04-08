@@ -6,15 +6,15 @@ use App\Entity\Comment;
 use App\Entity\Conference;
 use App\Entity\Photo;
 use App\Form\CommentFormType;
+use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
-use App\Repository\UserRepository;
-use App\SpamChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ConferenceController extends AbstractController
@@ -37,7 +37,7 @@ class ConferenceController extends AbstractController
         Conference $conference,
         CommentRepository $commentRepository,
         EntityManagerInterface $entityManager,
-        SpamChecker $spamChecker,
+        MessageBusInterface $messageBus,
         string $photoDir
     ): Response {
         $offset = max(0, $request->query->getInt('offset', 0));
@@ -68,6 +68,7 @@ class ConferenceController extends AbstractController
             }
 
             $entityManager->persist($comment);
+            $entityManager->flush();
 
             $context = [
                 'user_ip' => $request->getClientIp(),
@@ -75,11 +76,7 @@ class ConferenceController extends AbstractController
                 'referrer' => $request->headers->get('referer'),
                 'permalink' => $request->getUri(),
             ];
-            if ($spamChecker->getSpamScore($comment, $context) === 2) {
-                $comment->setVisible(false);
-            }
-
-            $entityManager->flush();
+            $messageBus->dispatch(new CommentMessage($comment->getId(), $context));
 
             return $this->redirectToRoute('conference_show', [
                 'slug' => $conference->getSlug(),

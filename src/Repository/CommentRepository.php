@@ -25,10 +25,14 @@ class CommentRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('c')
             ->andWhere('c.conference = :conference')
+            ->andWhere('c.visible = :visible')
+            ->andWhere('c.state = :state')
             ->orderBy('c.created', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults(Comment::COMMENTS_LIMIT)
             ->setParameter('conference', $conference)
+            ->setParameter('visible', true)
+            ->setParameter('state', Comment::STATE_PUBLISHED)
             ->getQuery();
 
         return new Paginator($query);
