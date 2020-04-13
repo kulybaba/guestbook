@@ -12,9 +12,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Comment
 {
     const COMMENTS_LIMIT = 2;
+    const STATE_ACCEPT = 'accept';
+    const STATE_REJECT_SPAM = 'reject_spam';
+    const STATE_MIGHT_BE_SPAM = 'might_be_spam';
     const STATE_SUBMITTED = 'submitted';
     const STATE_SPAM = 'spam';
+    const STATE_HAM = 'ham';
     const STATE_PUBLISHED = 'published';
+    const STATE_PUBLISH_HAM = 'publish_ham';
 
     /**
      * @var int $id
