@@ -12,6 +12,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Comment
 {
     const COMMENTS_LIMIT = 2;
+    const STATE_ACCEPT = 'accept';
+    const STATE_REJECT_SPAM = 'reject_spam';
+    const STATE_MIGHT_BE_SPAM = 'might_be_spam';
+    const STATE_SUBMITTED = 'submitted';
+    const STATE_SPAM = 'spam';
+    const STATE_HAM = 'ham';
+    const STATE_PUBLISHED = 'published';
+    const STATE_PUBLISH_HAM = 'publish_ham';
 
     /**
      * @var int $id
@@ -33,11 +41,11 @@ class Comment
     /**
      * @var bool $visible
      *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean",  options={"default": "1"})
      * @Assert\NotBlank()
      * @Assert\Length(min="1", max="255")
      */
-    private $visible;
+    private $visible = true;
 
     /**
      * @var Conference|null $conference
@@ -71,10 +79,12 @@ class Comment
      */
     private $photo;
 
-    public function __construct()
-    {
-        $this->visible = true;
-    }
+    /**
+     * @var string|null $state
+     *
+     * @ORM\Column(type="string", length=255, options={"default": "submitted"})
+     */
+    private $state = self::STATE_SUBMITTED;
 
     /**
      * @return string
@@ -188,6 +198,26 @@ class Comment
     public function setPhoto(?Photo $photo): self
     {
         $this->photo = $photo;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getState(): ?string
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param string $state
+     *
+     * @return $this
+     */
+    public function setState(string $state): self
+    {
+        $this->state = $state;
 
         return $this;
     }
