@@ -8,6 +8,8 @@ use App\Repository\CommentRepository;
 use App\SpamChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Twig\Mime\NotificationEmail;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -40,17 +42,29 @@ class CommentMessageHandler implements MessageHandlerInterface
     private $workflow;
 
     /**
+     * @var MailerInterface $mailer
+     */
+    private $mailer;
+
+    /**
      * @var LoggerInterface $logger
      */
     private $logger;
+
+    /**
+     * @var string $adminEmail
+     */
+    private $adminEmail;
 
     /**
      * @param SpamChecker $spamChecker
      * @param EntityManagerInterface $entityManager
      * @param CommentRepository $commentRepository
      * @param MessageBusInterface $messageBus
-     * @param WorkflowInterface $workflow
-     * @param LoggerInterface $logger
+     * @param WorkflowInterface $commentStateMachine
+     * @param MailerInterface $mailer
+     * @param LoggerInterface|null $logger
+     * @param string $adminEmail
      */
     public function __construct(
         SpamChecker $spamChecker,
@@ -58,14 +72,18 @@ class CommentMessageHandler implements MessageHandlerInterface
         CommentRepository $commentRepository,
         MessageBusInterface $messageBus,
         WorkflowInterface $commentStateMachine,
-        LoggerInterface $logger = null
+        MailerInterface $mailer,
+        LoggerInterface $logger = null,
+        string $adminEmail
     ) {
         $this->spamChecker = $spamChecker;
         $this->entityManager = $entityManager;
         $this->commentRepository = $commentRepository;
         $this->messageBus = $messageBus;
         $this->workflow = $commentStateMachine;
+        $this->mailer = $mailer;
         $this->logger = $logger;
+        $this->adminEmail = $adminEmail;
     }
 
     public function __invoke(CommentMessage $commentMessage)
@@ -88,7 +106,13 @@ class CommentMessageHandler implements MessageHandlerInterface
             $this->entityManager->flush();
             $this->messageBus->dispatch($commentMessage);
         } elseif ($this->workflow->can($comment, Comment::STATE_PUBLISHED) || $this->workflow->can($comment, Comment::STATE_PUBLISH_HAM)) {
-            $this->workflow->apply($comment, $this->workflow->can($comment, Comment::STATE_PUBLISHED ? Comment::STATE_PUBLISHED : Comment::STATE_PUBLISH_HAM));
+            $this->mailer->send((new NotificationEmail())
+                ->subject('New comment posted')
+                ->htmlTemplate('emails/comment_notification.html.twig')
+                ->from($this->adminEmail)
+                ->to($this->adminEmail)
+                ->context(['comment' => $comment])
+            );
         } elseif ($this->logger) {
             $this->logger->debug('Dropping comment message', [
                 'comment' => $comment->getId(),

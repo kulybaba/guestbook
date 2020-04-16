@@ -20,6 +20,7 @@ class Comment
     const STATE_HAM = 'ham';
     const STATE_PUBLISHED = 'published';
     const STATE_PUBLISH_HAM = 'publish_ham';
+    const STATE_REJECT = 'reject';
 
     /**
      * @var int $id

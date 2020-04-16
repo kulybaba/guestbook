@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comment reviewed{% endblock %}
+
+{% block body %}
+    <h3>Comment reviewed, thank you!</h3>
+    <p>Applied transition: <strong>{{ transition }}</strong></p>
+    <p>New state: <strong>{{ comment.state }}</strong></p>
+{% endblock %}
