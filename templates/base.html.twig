@@ -6,6 +6,9 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+        <header>
+            {{ render_esi(path('conferences_header')) }}
+        </header>
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </body>
