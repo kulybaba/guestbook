@@ -1,15 +1,63 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
     <head>
-        <meta charset="UTF-8">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
         <title>{% block title %}GuestBook{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+
+        {% block stylesheets %}
+            <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,500,500i,600,600i&display=swap" rel="stylesheet" />
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
     </head>
     <body>
-        <header>
-            {{ render_esi(path('conferences_header')) }}
+        <header class="header">
+            <nav class="navbar navbar-expand-xl navbar-light bg-light">
+                <div class="container mt-4 mb-3">
+                    <a class="navbar-brand mr-4 pr-2" href="{{ path('home') }}">&#128217; GUESTBOOK</a>
+
+                    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#header-menu" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Afficher/Cacher la navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="header-menu">
+                        <ul class="navbar-nav ml-auto">
+                            {% if app.user %}
+                                <li class="nav-item mr-3">
+                                    <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
+                                </li>
+                            {% else %}
+                                <li class="nav-item mr-3">
+                                    <a class="nav-link" href="{{ path('app_login') }}">Login</a>
+                                </li>
+                                <li class="nav-item mr-3">
+                                    <a class="nav-link" href="{{ path('app_register') }}">Register</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <nav class="bg-light border-bottom">
+                <div class="container">
+                    {{ render_esi(path('conferences_header')) }}
+                </div>
+            </nav>
         </header>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+
+        <main role="main" class="container mt-5">
+            {% block body %}{% endblock %}
+        </main>
+
+        <footer class="mt-7 text-center text-muted">
+            <p class="mt-3"><b><a href="#" class="text-white">Back to top</a></b></p>
+            <p><b>Developer:</b> Petro Kulybaba</p>
+        </footer>
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
     </body>
 </html>
