@@ -1,9 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h3>Conferences</h3>
-    {% for conference in conferences %}
-        <p><a href="{{ path('conference_show', { 'slug': conference.slug }) }}">{{ conference.title }}</a></p>
-        <p>{{ conference.body }}</p>
-    {% endfor %}
+    <div class="row">
+        {% for conference in conferences %}
+            <div class="col-12 col-md-6 col-lg-3 mb-4">
+                <div class="card border shadow lift">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h4 class="font-weight-light">{{ conference }}</h4>
+                        </div>
+                        <a href="{{ path('conference_show', { slug: conference.slug }) }}" class="btn btn-sm btn-blue stretched-link">View</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
