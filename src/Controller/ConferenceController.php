@@ -15,7 +15,10 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Notifier\Notification\Notification;
+use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ConferenceController extends AbstractController
 {
@@ -41,6 +44,7 @@ class ConferenceController extends AbstractController
         CommentRepository $commentRepository,
         EntityManagerInterface $entityManager,
         MessageBusInterface $messageBus,
+        NotifierInterface $notifier,
         string $photoDir
     ): Response {
         $offset = max(0, $request->query->getInt('offset', 0));
@@ -79,7 +83,9 @@ class ConferenceController extends AbstractController
                 'referrer' => $request->headers->get('referer'),
                 'permalink' => $request->getUri(),
             ];
-            $messageBus->dispatch(new CommentMessage($comment->getId(), $context));
+            $messageBus->dispatch(new CommentMessage($comment->getId(), $this->generateUrl('admin_comment_review', ['id' => $comment->getId()], UrlGeneratorInterface::ABSOLUTE_URL)));
+
+            $notifier->send(new Notification('Thank you! Comment successfully added!', ['browser']));
 
             return $this->redirectToRoute('conference_show', [
                 'slug' => $conference->getSlug(),
