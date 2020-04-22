@@ -46,6 +46,15 @@ hooks:
 
         (>&2 symfony-deploy)
 
+crons:
+    step_info:
+        # At 11:50 pm (UTC).
+        spec: '50 23 * * *'
+        cmd: |
+            if [ "$SYMFONY_BRANCH" = "master" ]; then
+                croncape symfony console app:step:info
+            fi
+
 workers:
     messages:
         commands:
